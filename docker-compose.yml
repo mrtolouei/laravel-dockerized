@@ -1,0 +1,99 @@
+services:
+    nginx:
+        container_name: "${CONTAINER_PREFIX:-laravel}_nginx"
+        image: nginx:alpine
+        ports:
+            - "8000:80"
+        volumes:
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./:/var/www
+        depends_on:
+            - php
+        restart: unless-stopped
+        networks:
+            - app_network
+
+    php:
+        container_name: "${CONTAINER_PREFIX:-laravel}_php"
+        image: laravel-php:latest
+        build:
+            context: ./
+            dockerfile: ./docker/php/Dockerfile
+        volumes:
+            - ./:/var/www
+        depends_on:
+            postgres:
+                condition: service_healthy
+#            mysql:
+#                condition: service_healthy
+            redis:
+                condition: service_started
+        restart: unless-stopped
+        networks:
+            - app_network
+
+    postgres:
+        container_name: "${CONTAINER_PREFIX:-laravel}_postgres"
+        image: postgres:16
+        restart: unless-stopped
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: ${DB_DATABASE:-laravel}
+            POSTGRES_USER: ${DB_USERNAME:-laravel}
+            POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+        ports:
+            - "5432:5432"
+        networks:
+            - app_network
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-laravel} -d ${DB_DATABASE:-laravel}" ]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+
+#    mysql:
+#        container_name: "${CONTAINER_PREFIX:-laravel}_mysql"
+#        image: mysql:8.0
+#        restart: unless-stopped
+#        ports:
+#            - "3306:3306"
+#        environment:
+#            MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+#            MYSQL_USER: ${DB_USERNAME:-laravel}
+#            MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+#            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+#        volumes:
+#            - mysql_data:/var/lib/mysql
+#        networks:
+#            - app_network
+#        healthcheck:
+#            test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USERNAME:-laravel}", "-p${DB_PASSWORD:-secret}" ]
+#            interval: 5s
+#            timeout: 10s
+#            retries: 10
+
+    redis:
+        container_name: "${CONTAINER_PREFIX:-laravel}_redis"
+        image: redis:alpine
+        restart: unless-stopped
+        volumes:
+            - redis_data:/data
+        command: --requirepass ${REDIS_PASSWORD}
+        environment:
+            - REDIS_REPLICATION_MODE=master
+            - ALLOW_EMPTY_PASSWORD=no
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+        ports:
+            - "6379:6379"
+        networks:
+            - app_network
+
+volumes:
+    postgres_data:
+    #mysql_data:
+    redis_data:
+
+networks:
+    app_network:
+        driver: bridge
