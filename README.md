@@ -42,15 +42,15 @@ A complete Laravel project with Docker configuration for easy development and qu
    ```
 4. Install dependencies (if not done automatically):
    ```bash
-   docker exec -it php composer install --ignore-platform-reqs
+   docker exec -it laravel_php composer install --ignore-platform-reqs
     ```
 5. Generate application key:
     ```bash
-    docker exec -it php php artisan key:generate
+    docker exec -it laravel_php php artisan key:generate
     ```
 6. Run migrations:
     ```bash
-   docker exec -it php php artisan migrate
+   docker exec -it laravel_php php artisan migrate
    ```
 7. Project is ready!:
    - Open in browser: [http://localhost:8000](http://localhost:8000)
