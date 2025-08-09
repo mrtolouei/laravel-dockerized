@@ -16,7 +16,6 @@ A complete Laravel project with Docker configuration for easy development and qu
 - ✅ Redis for cache and queues
 - ✅ Auto-configured Xdebug for debugging
 - ✅ Cron job management with Supercronic
-- ✅ Horizon support for queue management
 - ✅ Consistent and reproducible development environment
 
 ## 🛠 Prerequisites
