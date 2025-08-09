@@ -15,7 +15,7 @@ services:
 
     php:
         container_name: "${CONTAINER_PREFIX:-laravel}_php"
-        image: laravel-php:latest
+        working_dir: /var/www
         build:
             context: ./
             dockerfile: ./docker/php/Dockerfile
