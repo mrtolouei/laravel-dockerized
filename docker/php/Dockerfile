@@ -48,8 +48,6 @@ COPY . .
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
-
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage \
     && chmod -R 775 /var/www/bootstrap/cache
