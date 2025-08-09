@@ -40,7 +40,7 @@ A complete Laravel project with Docker configuration for easy development and qu
     ```bash
    docker compose up -d --build
    ```
-4. Install dependencies (if not done automatically):
+4. Install dependencies:
    ```bash
    docker exec -it laravel_php composer install --ignore-platform-reqs
     ```
