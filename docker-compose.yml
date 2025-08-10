@@ -3,7 +3,7 @@ services:
         container_name: "${CONTAINER_PREFIX:-laravel}_nginx"
         image: nginx:alpine
         ports:
-            - "8000:80"
+            - "${APP_PORT:-8000}:80"
         volumes:
             - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
             - ./:/var/www
